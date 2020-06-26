@@ -9,9 +9,9 @@ const moment = require("moment");
 const Chance = require("chance");
 const chanceobj = new Chance();
 //this line tells node that we need the content from our config folder
-const config  = require("./config.json");
+const config  = require("../Al-An/config.json");
 //opening the database
-sql.open(`database.sqlite`)
+sql.open(`../Al-An/database.sqlite`)
 
 //This will define our bot
 var bot = new Discord.Client()
@@ -91,7 +91,7 @@ async function loadpetbars(bar, pet, usr){
     if(!row) return
     let maxstat = bar == "food" ? `maxfood` : bar == "happiness" ? `maxhappiness` : `maxhealth` //selects the correct stat
     //gets all required images
-    var images = [`./assets/bars/pets/background.png`, `./assets/bars/pets/${bar}.png`]
+    var images = [`../Al-An/assets/bars/pets/background.png`, `../Al-An/assets/bars/pets/${bar}.png`]
     var jimps = []
     for (var i = 0; i < images.length; i++){
         jimps.push(jimp.read(images[i]))
@@ -106,7 +106,7 @@ async function loadpetbars(bar, pet, usr){
         data[1].resize(perc, 50)
         data[0].composite(data[1], 0, 0)
         //saves the images
-        data[0].write(`./assets/users/${path}/pet${bar}.png`, function(){})
+        data[0].write(`../Al-An/assets/users/${path}/pet${bar}.png`, function(){})
     })
 }
 
@@ -114,7 +114,7 @@ async function xpimg(pet, usr){
     let row = await sql.get(`SELECT * FROM pets WHERE name = "${pet}" AND owner = "${usr}"`) //gets the pet's data
     if(!row) return //if it doesn't find the pet, it doesn't do anything
 
-    var images = [`./assets/bars/pets/xp.png`, `./assets/bars/pets/xp_mask.png`, `./assets/bars/pets/xp_bg.png`] //all images we'll work with
+    var images = [`../Al-An/assets/bars/pets/xp.png`, `../Al-An/assets/bars/pets/xp_mask.png`, `../Al-An/assets/bars/pets/xp_bg.png`] //all images we'll work with
     var jimps = []
     for (var i = 0; i < images.length; i++){
         jimps.push(jimp.read(images[i])) //adds the images to jimp can process them
@@ -137,7 +137,7 @@ async function xpimg(pet, usr){
         data[0].mask(data[1], 0, 0)
         data[2].composite(data[0], 0, 0)
         data[2].flip(false, true)
-        data[2].write(`./assets/users/${path}/petxp.png`, function(){})
+        data[2].write(`../Al-An/assets/users/${path}/petxp.png`, function(){})
     })
 }
 // --- adds a new item to a users inventory
@@ -717,23 +717,23 @@ else if (cmd == "wiki"){
 
         if(category == "creatures"){
             //variable to store the path to the creature image in
-            let imgpath = `./assets/wiki/creatures/${row.species}.jpg`
-            if(!fs.existsSync(imgpath)){imgpath = `./assets/wiki/creatures/empty.jpg`}
+            let imgpath = `../Al-An/assets/wiki/creatures/${row.species}.jpg`
+            if(!fs.existsSync(imgpath)){imgpath = `../Al-An/assets/wiki/creatures/empty.jpg`}
 
             //sets the bots status to typing, so the user knows the command worked
             message.channel.startTyping()
-            if(row.updated != 0 || !fs.existsSync(`./assets/wiki/complete/${row.species.toLowerCase()}wiki.jpg`)){ //only updates the image if something was changed to make it quicker
-                var images = ["./assets/wiki/wiki_bg.jpg", "./assets/wiki/wiki_bg.png", imgpath, `./assets/wiki/wiki_overlay.png`, `./assets/menus/menuimgs/${row.diet}.png`, `./assets/wiki/Hexagon.png`]
+            if(row.updated != 0 || !fs.existsSync(`../Al-An/assets/wiki/complete/${row.species.toLowerCase()}wiki.jpg`)){ //only updates the image if something was changed to make it quicker
+                var images = ["../Al-An/assets/wiki/wiki_bg.jpg", "../Al-An/assets/wiki/wiki_bg.png", imgpath, `../Al-An/assets/wiki/wiki_overlay.png`, `../Al-An/assets/menus/menuimgs/${row.diet}.png`, `../Al-An/assets/wiki/Hexagon.png`]
                 var jimps = []
                 //gets all drops for the species from the database
                 let droprows = await sql.all(`SELECT * FROM drops WHERE creature = "${row.species}"`).catch(allerrors)
                 //adds icons for all drops to the images array
                 if(droprows != undefined && droprows != ""){
                     for(i in droprows){
-                        if (!fs.existsSync(`./assets/wiki/items/!${droprows[i].name}_transparent.png`)){
-                            images.push(`./assets/wiki/items/!Empty_transparent.png`)
+                        if (!fs.existsSync(`../Al-An/assets/wiki/items/!${droprows[i].name}_transparent.png`)){
+                            images.push(`../Al-An/assets/wiki/items/!Empty_transparent.png`)
                         }
-                        else{images.push(`./assets/wiki/items/!${droprows[i].name}_transparent.png`)}
+                        else{images.push(`../Al-An/assets/wiki/items/!${droprows[i].name}_transparent.png`)}
                     }
                 }
                 for (var i = 0; i < images.length; i++){
@@ -760,15 +760,15 @@ else if (cmd == "wiki"){
                             dropx += 175
                         }
                     }
-                    await jimp.loadFont(`./assets/fonts/unisans_80.fnt`).then(async wikifont => {
+                    await jimp.loadFont(`../Al-An/assets/fonts/unisans_80.fnt`).then(async wikifont => {
                         //loads one different (smaller) font:
-                        var wikifont_m = await jimp.loadFont(`./assets/fonts/unisans_75.fnt`)
+                        var wikifont_m = await jimp.loadFont(`../Al-An/assets/fonts/unisans_75.fnt`)
                         //loads another different (smallest) font:
-                        var wikifont_s = await jimp.loadFont(`./assets/fonts/unisans_65.fnt`)
+                        var wikifont_s = await jimp.loadFont(`../Al-An/assets/fonts/unisans_65.fnt`)
                         //function to determine the correct font
                         function rightfont(num){return num < 1000 ? wikifont : wikifont_m}
                         // --- prints all the values and text on the image:
-                        data[0].print(wikifont_m, 750, 85, {text:  `Class: ${thousandize(row.class)}`, alignmentX: jimp.HORIZONTAL_ALIGN_LEFT, alignmentY: jimp.VERTICAL_ALIGN_MIDDLE}, 0, 0)
+                        data[0].print(wikifont_m, 750, 85, {text:  `Class: ${row.class}`, alignmentX: jimp.HORIZONTAL_ALIGN_LEFT, alignmentY: jimp.VERTICAL_ALIGN_MIDDLE}, 0, 0)
                                                 //health stat:
                         data[0].print(wikifont, 200, 375, {text:  `${thousandize(row.health)}`, alignmentX: jimp.HORIZONTAL_ALIGN_LEFT, alignmentY: jimp.VERTICAL_ALIGN_BOTTOM}, 0, 0)
                         data[0].print(wikifont, 675, 375, {text: `+${thousandize(row.maxhealthinc)}`, alignmentX: jimp.HORIZONTAL_ALIGN_RIGHT, alignmentY: jimp.VERTICAL_ALIGN_BOTTOM}, 0, 0)
@@ -811,7 +811,7 @@ else if (cmd == "wiki"){
                             }
                         }
                     })
-                    data[0].write(`./assets/wiki/complete/${row.species.toLowerCase()}wiki.jpg`, function(){})
+                    data[0].write(`../Al-An/assets/wiki/complete/${row.species.toLowerCase()}wiki.jpg`, function(){})
                 })
                 //changes the updated stat to 0 so next time it doesn't update the image again (used if values or pictures change to update the wiki)
                 sql.run(`UPDATE creatures SET updated = "0" WHERE species = "${row.species}"`).catch(allerrors)
@@ -823,7 +823,7 @@ else if (cmd == "wiki"){
             .setColor(row.col)
             .setTitle(`Wiki: ${row.species}`)
             .setDescription(row.desc)
-            .attachFile(`./assets/wiki/complete/${row.species.toLowerCase()}wiki.jpg`)
+            .attachFile(`../Al-An/assets/wiki/complete/${row.species.toLowerCase()}wiki.jpg`)
             .setImage(`attachment://${row.species.toLowerCase()}wiki.jpg`)
             message.channel.send(wikiembed).catch(allerrors)
         }
@@ -833,16 +833,16 @@ else if (cmd == "wiki"){
             //if no item is found, send an error message
             if(!row) return errmsg(`There's no such creature or item!`)
             //variable to store the path to the item image in
-            let imgpath = `./assets/wiki/items/${row.name.toLowerCase()}.png`
+            let imgpath = `../Al-An/assets/wiki/items/${row.name.toLowerCase()}.png`
             //if the file with the item image doesn't exist, use a generic one
-            if(!fs.existsSync(imgpath)){imgpath = `./assets/wiki/items/empty.png`}
+            if(!fs.existsSync(imgpath)){imgpath = `../Al-An/assets/wiki/items/empty.png`}
             //create a new embed to send
             wikiembed = new Discord.RichEmbed()
             .setColor(`#f7faf8`)
             .setTitle(`Wiki: ${row.name}`)
             .setDescription(row.desc)
             .attachFile(imgpath)
-            .setThumbnail(imgpath == `./assets/wiki/items/empty.png` ? `attachment://empty.png` : `attachment://${row.name.toLowerCase()}.png`)
+            .setThumbnail(imgpath == `../Al-An/assets/wiki/items/empty.png` ? `attachment://empty.png` : `attachment://${row.name.toLowerCase()}.png`)
             message.channel.send(wikiembed).catch(allerrors)
         }
     }   
@@ -903,7 +903,7 @@ else if (cmd == "prof" || cmd == "profile"){
         if(perc > 1){perc = 1}
         else if (perc < 0){perc = 0}
         usrname = user.username
-        var images = [`${row.background}`, "./assets/menus/userprof.png", user.avatarURL != undefined ? user.avatarURL : user.defaultAvatarURL, `./assets/bars/users/${perc}.png`, `https://i.imgur.com/14laFiB.png`]
+        var images = [`${row.background}`, "../Al-An/assets/menus/userprof.png", user.avatarURL != undefined ? user.avatarURL : user.defaultAvatarURL, `../Al-An/assets/bars/users/${perc}.png`, `https://i.imgur.com/14laFiB.png`]
         var jimps = []
         for (var i = 0; i < images.length; i++){
             jimps.push(jimp.read(images[i]))
@@ -921,14 +921,14 @@ else if (cmd == "prof" || cmd == "profile"){
                 data[4].resize(80, 80)
                 data[0].composite(data[4], 1120, 315)
             }
-            await jimp.loadFont(`./assets/fonts/proffont_white.fnt`).then(async proffont_w => {
+            await jimp.loadFont(`../Al-An/assets/fonts/proffont_white.fnt`).then(async proffont_w => {
                 //different fonts
-                var proffont_w_t = await jimp.loadFont(`./assets/fonts/proffont_white_title.fnt`)
-                var proffont = await jimp.loadFont(`./assets/fonts/proffont.fnt`)
-                var xpfont = await jimp.loadFont(`./assets/fonts/xpfont.fnt`)
-                var namefont_s = await jimp.loadFont(`./assets/fonts/namefont_s.fnt`)
-                var levelfont_a = await jimp.loadFont(`./assets/fonts/levelfont_a.fnt`)
-                var levelfont_b = await jimp.loadFont(`./assets/fonts/levelfont_b.fnt`)
+                var proffont_w_t = await jimp.loadFont(`../Al-An/assets/fonts/proffont_white_title.fnt`)
+                var proffont = await jimp.loadFont(`../Al-An/assets/fonts/proffont.fnt`)
+                var xpfont = await jimp.loadFont(`../Al-An/assets/fonts/xpfont.fnt`)
+                var namefont_s = await jimp.loadFont(`../Al-An/assets/fonts/namefont_s.fnt`)
+                var levelfont_a = await jimp.loadFont(`../Al-An/assets/fonts/levelfont_a.fnt`)
+                var levelfont_b = await jimp.loadFont(`../Al-An/assets/fonts/levelfont_b.fnt`)
                 var namefontvar = usrname.length < 18 ? proffont_w_t : namefont_s
                 //prints all the values and text on the image
                 data[0].print(namefontvar, 80, namecoord, {text: `${`${usrname}`}`, alignmentX: jimp.HORIZONTAL_ALIGN_LEFT, alignmentY: jimp.VERTICAL_ALIGN_BOTTOM}, 700, 10)
@@ -1621,7 +1621,7 @@ else if(cmd == "tame" || cmd == "tames"){
 
                 // --- composes the ability image
                 //adds all images that are required to an array
-                var images = [ `./assets/menus/taming.jpg`, `./assets/bars/pets/taming.png`, `./assets/bars/pets/torpor.png`, `./assets/menus/menuimgs/${crrow.diet}.png`]
+                var images = [ `../Al-An/assets/menus/taming.jpg`, `../Al-An/assets/bars/pets/taming.png`, `../Al-An/assets/bars/pets/torpor.png`, `../Al-An/assets/menus/menuimgs/${crrow.diet}.png`]
                 var jimps = [] //empty array to store the jimps later
                 for (var i = 0; i < images.length; i++){
                     jimps.push(jimp.read(images[i])) //pushes the processed images to the empty array
@@ -1651,9 +1651,9 @@ else if(cmd == "tame" || cmd == "tames"){
                     data[0].composite(data[2], 52, 183) //adds the torpidity bar
                     data[0].composite(data[3], 660,595) //adds the diet icon
                     // --- add any text that we need
-                    await jimp.loadFont(`./assets/fonts/unisans_50.fnt`).then(async font => {
+                    await jimp.loadFont(`../Al-An/assets/fonts/unisans_50.fnt`).then(async font => {
                         //loads an even larger font variant
-                        var font_l = await jimp.loadFont(`./assets/fonts/unisans_65.fnt`)
+                        var font_l = await jimp.loadFont(`../Al-An/assets/fonts/unisans_65.fnt`)
 
                         // --- prints all the values and text on the image
                         data[0].print(font_l, 640, 45, {text: `Taming﻿progress﻿(${prog}%)`, alignmentX: jimp.HORIZONTAL_ALIGN_CENTER, alignmentY: jimp.VERTICAL_ALIGN_BOTTOM}, 0, 0)
@@ -2110,7 +2110,7 @@ else if (cmd == "pet"){
         path = user.id
 
         // --- creates the profile image
-        var images = ["./assets/menus/petprof.jpg", `./assets/creatures/${row.species}/${row.skin}.png`, `./assets/menus/menuimgs/${row.class}.png`, `./assets/menus/menuimgs/${crrow.diet}.png`, `./assets/menus/petprof_overlay.png`, `./assets/bars/pets/xp.png`, `./assets/bars/pets/xp_mask.png`, `./assets/bars/pets/xp_bg.png`, `./assets/bars/pets/background.png`, `./assets/bars/pets/health.png`, `./assets/bars/pets/food.png`, `./assets/bars/pets/happiness.png`]
+        var images = ["../Al-An/assets/menus/petprof.jpg", `../Al-An/assets/creatures/${row.species}/${row.skin}.png`, `../Al-An/assets/menus/menuimgs/${row.class}.png`, `../Al-An/assets/menus/menuimgs/${crrow.diet}.png`, `../Al-An/assets/menus/petprof_overlay.png`, `../Al-An/assets/bars/pets/xp.png`, `../Al-An/assets/bars/pets/xp_mask.png`, `../Al-An/assets/bars/pets/xp_bg.png`, `../Al-An/assets/bars/pets/background.png`, `../Al-An/assets/bars/pets/health.png`, `../Al-An/assets/bars/pets/food.png`, `../Al-An/assets/bars/pets/happiness.png`]
         var jimps = []
         for (var i = 0; i < images.length; i++){
             if(!fs.existsSync(images[i]) && images[i] != row.pic) return errmsg(`There was an error retrieving image data. Please try again.`).catch(allerrors)
@@ -2201,12 +2201,12 @@ else if (cmd == "pet"){
             //adds a water overlay over the pet so it looks more realistic
             data[0].composite(data[4], 0, 0)
 
-            await jimp.loadFont(`./assets/fonts/Unisans_50.fnt`).then(async numfont => {
+            await jimp.loadFont(`../Al-An/assets/fonts/Unisans_50.fnt`).then(async numfont => {
                     // --- prints all the values and text on the image
                     //loads a different font for the level
-                    var levelfont = await jimp.loadFont(`./assets/fonts/Unisans_150.fnt`)
+                    var levelfont = await jimp.loadFont(`../Al-An/assets/fonts/Unisans_150.fnt`)
                     //loads a different font for the small values on bars
-                    var barfont = await jimp.loadFont(`./assets/fonts/FuturaThin_20.fnt`)
+                    var barfont = await jimp.loadFont(`../Al-An/assets/fonts/FuturaThin_20.fnt`)
 
                     // DISABLED prints the values on the bars
                     //data[0].print(barfont, 300, 56, {text: `${thousandize(row.health)}`, alignmentX: jimp.HORIZONTAL_ALIGN_LEFT, alignmentY: jimp.VERTICAL_ALIGN_TOP}, 0, 0)
@@ -2250,6 +2250,7 @@ else if (cmd == "pet"){
         let crrow = await sql.get(`SELECT * FROM creatures WHERE species = "${petrow.species}"`).catch(allerrors)
         //if the creature isnt found, send an error message
         if(!crrow) return errms(`An error occurred while accessing creature data. Please try again`)
+        console.log(crrow)
         //creates a new embed for the stats:
         let statemb = new Discord.RichEmbed()
         .setColor(`#00E584`)
@@ -4041,7 +4042,7 @@ else if (cmd == "pet"){
 
                                     // --- composes the ability image
                                     //adds all images that are required to an array
-                                    var images = [ `./assets/menus/taming.jpg`, `./assets/bars/pets/taming.png`, `./assets/bars/pets/torpor.png`, `./assets/menus/menuimgs/${erow.diet}.png`]
+                                    var images = [ `../Al-An/assets/menus/taming.jpg`, `../Al-An/assets/bars/pets/taming.png`, `../Al-An/assets/bars/pets/torpor.png`, `../Al-An/assets/menus/menuimgs/${erow.diet}.png`]
                                     var jimps = [] //empty array to store the jimps later
                                     for (var i = 0; i < images.length; i++){
                                         jimps.push(jimp.read(images[i])) //pushes the processed images to the empty array
@@ -4071,9 +4072,9 @@ else if (cmd == "pet"){
                                         data[0].composite(data[2], 52, 183) //adds the torpidity bar
                                         data[0].composite(data[3], 660,595) //adds the diet icon
                                         // --- add any text that we need
-                                        await jimp.loadFont(`./assets/fonts/unisans_50.fnt`).then(async font => {
+                                        await jimp.loadFont(`../Al-An/assets/fonts/unisans_50.fnt`).then(async font => {
                                             //loads an even larger font variant
-                                            var font_l = await jimp.loadFont(`./assets/fonts/unisans_65.fnt`)
+                                            var font_l = await jimp.loadFont(`../Al-An/assets/fonts/unisans_65.fnt`)
 
                                             // --- prints all the values and text on the image
                                             data[0].print(font_l, 640, 45, {text: `Taming﻿progress﻿(${prog}%)`, alignmentX: jimp.HORIZONTAL_ALIGN_CENTER, alignmentY: jimp.VERTICAL_ALIGN_BOTTOM}, 0, 0)
@@ -4203,7 +4204,7 @@ else if (cmd == "pet"){
         //sets the bots status to typing, so the user knows the command worked
         message.channel.startTyping()
         //adds all images that are required to an array
-        var images = [`./assets/menus/leveling.jpg`, `./assets/menus/menuimgs/${crrow.diet}.png`, `./assets/creatures/${petrow.species}/${petrow.skin}.png`, `./assets/menus/petprof_overlay_leveling.png`]
+        var images = [`../Al-An/assets/menus/leveling.jpg`, `../Al-An/assets/menus/menuimgs/${crrow.diet}.png`, `../Al-An/assets/creatures/${petrow.species}/${petrow.skin}.png`, `../Al-An/assets/menus/petprof_overlay_leveling.png`]
         var jimps = [] //empty array to store the jimps later
         for (var i = 0; i < images.length; i++){
             jimps.push(jimp.read(images[i])) //pushes the processed images to the empty array
@@ -4223,7 +4224,7 @@ else if (cmd == "pet"){
             data[0].composite(data[2], 250, 45) //adds the pet image
             data[0].composite(data[3], -100, -300) //adds the water overlay
             // --- add any text that we need
-            await jimp.loadFont(`./assets/fonts/wikifont.fnt`).then(async wikifont => {
+            await jimp.loadFont(`../Al-An/assets/fonts/wikifont.fnt`).then(async wikifont => {
                 
                 // --- prints all the values and text on the image
                 //health stat:
@@ -4779,9 +4780,9 @@ Type the respective number beside the action you would like to select.\nType 'ca
                             message.channel.startTyping();
                             // --- composes the ability image
                             //determines if a specific image for the ability type exists, if not just use a basic one
-                            let abilitypath = fs.existsSync(`./assets/menus/ability_${abrow.type.toLowerCase()}.jpg`) ? `./assets/menus/ability_${abrow.type.toLowerCase()}.jpg` : `./assets/menus/ability.jpg`
+                            let abilitypath = fs.existsSync(`../Al-An/assets/menus/ability_${abrow.type.toLowerCase()}.jpg`) ? `../Al-An/assets/menus/ability_${abrow.type.toLowerCase()}.jpg` : `../Al-An/assets/menus/ability.jpg`
                             //adds all images that are required to an array
-                            var images = [abilitypath, `./assets/bars/abilities/${usrabrow.lvl}.png`, `./assets/abilities/${abrow.name}.png`]
+                            var images = [abilitypath, `../Al-An/assets/bars/abilities/${usrabrow.lvl}.png`, `../Al-An/assets/abilities/${abrow.name}.png`]
                             var jimps = [] //empty array to store the jimps later
                             for (var i = 0; i < images.length; i++){
                                 jimps.push(jimp.read(images[i])) //pushes the processed images to the empty array
@@ -4799,11 +4800,11 @@ Type the respective number beside the action you would like to select.\nType 'ca
                                 data[0].composite(data[1], 10, 10) //adds the ability frame
                                 data[0].composite(data[2], 80, 68) //adds the ability icon
                                 // --- add any text that we need
-                                await jimp.loadFont(`./assets/fonts/abilityfont.fnt`).then(async abilityfont => {
+                                await jimp.loadFont(`../Al-An/assets/fonts/abilityfont.fnt`).then(async abilityfont => {
                                     //loads a slightly smaller font variant
-                                    var abilityfont_m = await jimp.loadFont(`./assets/fonts/abilityfont_m.fnt`)
+                                    var abilityfont_m = await jimp.loadFont(`../Al-An/assets/fonts/abilityfont_m.fnt`)
                                     //loads the smallest font variant
-                                    var abilityfont_s = await jimp.loadFont(`./assets/fonts/abilityfont_s.fnt`)
+                                    var abilityfont_s = await jimp.loadFont(`../Al-An/assets/fonts/abilityfont_s.fnt`)
                                     
                                     // --- prints all the values and text on the image
                                     // --- adds the damage amounts, changes font size for larger numbers
@@ -4815,7 +4816,7 @@ Type the respective number beside the action you would like to select.\nType 'ca
                                     data[0].print(usrabrow.specialvall < 1 ? abilityfont_m : abilityfont_s, 1150,515, {text: `${sdmgl}`, alignmentX: jimp.HORIZONTAL_ALIGN_CENTER, alignmentY: jimp.VERTICAL_ALIGN_CENTER}, 0, 0) //adds special damage vs leviathan
                                     // --- adds all other text
                                     //only adds the ability type if it's different from the predetermined ones: (predetermined ones have it on the basic image already)
-                                    if(!fs.existsSync(`./assets/menus/ability_${abrow.type.toLowerCase()}.jpg`)){
+                                    if(!fs.existsSync(`../Al-An/assets/menus/ability_${abrow.type.toLowerCase()}.jpg`)){
                                         data[0].print(abilityfont, 205, 425, {text: `${abrow.type}`, alignmentX: jimp.HORIZONTAL_ALIGN_LEFT, alignmentY: jimp.VERTICAL_ALIGN_BOTTOM}, 0, 0)
                                     }
                                     data[0].print(abilityfont, 205, 560, {text: `${usrabrow.effect}`, alignmentX: jimp.HORIZONTAL_ALIGN_LEFT, alignmentY: jimp.VERTICAL_ALIGN_BOTTOM}, 0, 0)
@@ -4949,7 +4950,7 @@ Type the respective number beside the action you would like to select.\nType 'ca
         .setTitle(botye+` You played with ${petrow.name}!`)
         .addField(`Results:`, `+${newhappiness-petrow.happiness} happiness\n (Total: ${newhappiness})`)
         .setColor(`77FF77`)
-        .attachFile(`./assets/creatures/${petrow.species}/${petrow.skin}.png`)
+        .attachFile(`../Al-An/assets/creatures/${petrow.species}/${petrow.skin}.png`)
         .setThumbnail(`attachment://${petrow.skin}.png`)
         //updates the stat and sends a confirmation message
         sql.run(`UPDATE pets SET happiness = "${newhappiness}" WHERE owner = "${message.author.id}" AND name = "${petrow.name}"`)
@@ -5366,7 +5367,7 @@ else if(cmd == "creature.add"){
             //variable to store if the user reacted or the menu timed out
             let reacted = 0
             //creates a message collector to listen for the users answer for 30 seconds
-            const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 60000 });
+            const collector = new Discord.MessageCollector(message.channel, m => m.author.id === message.author.id, { time: 120000 });
             collector.on('collect', async message => {
                 //gets the arguments on the new message
                 let args2 = message.cleanContent.trim().split(/ +/g);
