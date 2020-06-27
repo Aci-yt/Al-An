@@ -2321,7 +2321,7 @@ else if (cmd == "pet"){
         
         // --- returns if pet or location is unspecified
         if(!petargs[0]) return errmsg(`Please specify the pet you want to take out hunting!`)
-        else if (!petargs[1]) return errmsg(`Please specify the biome you want to hunt in!\n\n__Available locations:__\`\`\`md${availablelocations}\`\`\``)
+        else if (!petargs[1]) return errmsg(`Please specify the biome you want to hunt in!\n\n__Available locations:__\`\`\`md${availablelocations}\`\`\``, 12)
 
         // --- gets the pet row
         let petname = petargs[0].toLowerCase() 
@@ -5068,7 +5068,8 @@ ${config.prefix2}pet level       :: Upgrade your pet's stats
 ${config.prefix2}pet list        :: Lists all of your pets
 ${config.prefix2}pet name        :: Rename your pet
 ${config.prefix2}pet play        :: Increases a pet's happiness
-${config.prefix2}pet train       :: Train abilities for your pet
+${config.prefix2}pet view        :: Displays your pet's profile
+${config.prefix2}pet stats       :: View your pet's detailed values
 ${config.prefix2}pet view        :: Displays your pet's profile
 
 == Utility ==
@@ -5127,6 +5128,7 @@ Do \`${config.prefix2}commands\` to get an overview of all available commands\no
             case"view": //subcategory of pet menu
             case"feed": //subcategory of pet menu
             case"list": //subcategory of pet menu
+            case"stats"://subcategory of pet menu
             case"train"://subcategory of pet menu
             case"play": //subcategory of pet menu
                 message.channel.send(`\`\`\`asciidoc
@@ -5137,6 +5139,7 @@ Use "${config.prefix2}pet list (<user>)"            :: to list all pets of a spe
 Use "${config.prefix2}pet name <OldName> <NewName>" :: to rename one of your pets\n
 Use "${config.prefix2}pet level <name>"             :: to improve a pet's stats ('${config.prefix2}help level' for more info)\n
 Use "${config.prefix2}pet play <name>               :: to play with one of your pets to increase their happiness\n
+Use "${config.prefix2}pet stats <name>"             :: to detailed numbers about one of your pets\n
 Use "${config.prefix2}pet train <name>"             :: to learn, improve, level or unlearn a pet's abilities)\n
 Use "${config.prefix2}pet view <name> (<user>)"     :: to view one of your or someone else's pets
                 \`\`\``).catch(allerrors)
