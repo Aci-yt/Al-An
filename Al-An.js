@@ -2308,6 +2308,10 @@ else if (cmd == "pet"){
     else if(petcmd == "hunt"){
         //#region problemchecks, variables
 
+        // --- checks if the user is still on cooldown:
+        if(await checkcooldown(`hunt`, message.author.id) > 0) return errmsg(`You can't go hunting for another ${await checkcooldown(`hunt`, message.author.id)} seconds!`)
+        else {await newcooldown(`hunt`, 30, message.author.id)}
+
         // --- gets all available locations from the database and adds them to a string
         let availablelocationsrow = await sql.all(`SELECT * FROM locations`)
         let availablelocations = ""
@@ -2349,14 +2353,12 @@ else if (cmd == "pet"){
         else if(petrow.health < petrow.maxhealth/10) return errmsg(`Your pet is too hurt to go hunting! Take care of it first.`) //can't go hunting if the pet has less then 10% health
         // --- checks if the pet's level is high enough for the
         else if(petrow.lvl < locrow.lvl) return errmsg(`Your pet's level is not high enough to go hunting here!`) //can't go hunting if the pet can't access the location
+        //checks if the user can hunt in the specified location (need of submarines later)
+        else if(locrow.depth1 >= 100) return errmsg(`This biome is too deep to explore without a submarine!`)
 
         // --- if the user is not in the database, return
         if(!userrow) return errmsg(`An error occurred. Please try again.`)
 
-        
-        // --- checks if the user is still on cooldown:
-        if(await checkcooldown(`hunt`, message.author.id) > 0) return errmsg(`You can't go hunting for another ${await checkcooldown(`hunt`, message.author.id)} seconds!`)
-        else {await newcooldown(`hunt`, 30, message.author.id)}
 
 
         // --- adds all possible encounters to an array and chooses a random one
