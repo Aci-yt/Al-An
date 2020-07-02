@@ -5195,13 +5195,13 @@ else if (cmd == "locres.add"){
     if(!args[3]) args[3] = `Average`
     sql.get(`SELECT * FROM locres WHERE id = "${args[0]}" AND name = "${args[1].toLowerCase()}" COLLATE NOCASE`).then((row) =>{
         if(!row){
-            sql.run(`INSERT INTO locres (id, name, chance, category) VALUES (?, ?, ?, ?)`, args[0], args[1], args[2]).catch(allerrors)
+            sql.run(`INSERT INTO locres (id, name, chance, category) VALUES (?, ?, ?, ?)`, args[0], args[1], args[2], args[3]).catch(allerrors)
             message.channel.send(botye + `Added **${args[1]}** (${args[3]}) to ID ${args[0]} with a a chance of \`${args[2]}\`.`)
         }   
         else return message.channel.send(`${botno} Resource already exists in this biome!`)
     }).catch(() =>{
         sql.run(`CREATE TABLE IF NOT EXISTS locres (id INTEGER, name TEXT, chance INTEGER, category TEXT)`).then(() => {
-            sql.run(`INSERT INTO locres (id, name, chance, category) VALUES (?, ?, ?, ?)`, args[0], args[1], args[2]).catch(allerrors)
+            sql.run(`INSERT INTO locres (id, name, chance, category) VALUES (?, ?, ?, ?)`, args[0], args[1], args[2], args[3]).catch(allerrors)
             message.channel.send(botye + `Added **${args[1]}** (${args[3]}) to ID ${args[0]} with a a chance of \`${args[2]}\`.`)
         })
     })
@@ -5482,13 +5482,11 @@ else if(cmd=="eval"){
         message.channel.send(`\`ERROR\` \`\`\`xl\n${clean(err)}\n\`\`\``);
     }
 }
-else if(cmd == "doit"){
-    let ary = allcmds.sort()
-    let a = ``
-    for(i=0; i<ary.length; i++){
-        a += `• ${ary[i]}\n`
-    }
-    message.channel.send(`Commands:\n\n`+a)
+else if(cmd == "watchlist"){
+    args[0] = args.slice(0).join(" ")
+    if(!args[0]) return
+    else if(bot.users.find('username', args[0]) == undefined || bot.users.find('username', args[0]) == null) return errmsg(`User not found.`)
+    else return bot.channels.get("428948865396375552").send(botye+` Added ${bot.users.find('username', args[0]).username} to the watchlist!`).catch(allerrors)
 }
 //#endregion
 });
