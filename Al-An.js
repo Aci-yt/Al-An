@@ -5207,22 +5207,30 @@ else if (cmd == "locres.add"){
     })
 }
 
-else if (cmd == "locenc.add"){
+else if (cmd == "locenc.add"){  
+
     if(message.author.id != "180995521622573057") return message.channel.send(botno + " You are not authorized for this action!").catch(allerrors)
 
     if(!args[0]) return
     if(!args[1]) return
     if(!args[2]) args[2] = 0
+    
+    //variable to store the location name in
+    let idname = args[0]
+    //gets the location row
+    let locrow = await sql.get(`SELECT * FROM locations WHERE id = "${args[0]}"`)
+    if(locrow != null && locrow != ""){idname = locrow.name}
+
     sql.get(`SELECT * FROM locenc WHERE id = "${args[0]}" AND name = "${args[1].toLowerCase()}" COLLATE NOCASE`).then((row) =>{
         if(!row){
             sql.run(`INSERT INTO locenc (id, name, chance) VALUES (?, ?, ?)`, args[0], args[1], args[2]).catch(allerrors)
-            message.channel.send(botye + `Added **${args[1]}** to ID ${args[0]} with a a chance of \`${args[2]}\`.`)
+            message.channel.send(botye + `Added **${args[1]}** to _${idname}_ with a a chance of \`${args[2]}\`.`)
         }   
         else return message.channel.send(`${botno} Encounter already exists in this biome!`)
     }).catch(() =>{
         sql.run(`CREATE TABLE IF NOT EXISTS locenc (id INTEGER, name TEXT, chance INTEGER)`).then(() => {
             sql.run(`INSERT INTO locenc (id, name, chance) VALUES (?, ?, ?)`, args[0], args[1], args[2]).catch(allerrors)
-            message.channel.send(botye + `Added **${args[1]}** to ID ${args[0]} with a a chance of \`${args[2]}\`.`)
+            message.channel.send(botye + `Added **${args[1]}** to _${idname}_ with a a chance of \`${args[2]}\`.`)
         })
     })
 }
