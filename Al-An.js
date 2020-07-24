@@ -4354,7 +4354,8 @@ else if (cmd == "pet"){
         //gets all abilities for a specific class and saves them in an array and a variable
         let abilities = []
         let abilitylist = ``
-        let abilityrows = await sql.all(`SELECT * FROM abilities WHERE class = "${petrow.class}"`)
+        //gets all abilities from the database that are at or below the pet's level
+        let abilityrows = await sql.all(`SELECT * FROM abilities WHERE class = "${petrow.class}" AND lvl <= "${petrow.lvl}"`)
         if(abilityrows == "") return errmsg(`An error occurred while loading abilities. Please try again!`).catch(allerrors)
         abilityrows.forEach((row) => {
             abilitylist = abilitylist + `\n• ${row.name}` //adds all ability names to a variable for the "available abilities" part of the error message
@@ -4385,7 +4386,7 @@ Type the respective number beside the action you would like to select.\nType 'ca
             if(args2[0].toLowerCase() == `cancel`) {reacted = "y"; collector.stop()}
             else if(args2[0] == "1"){//user chose to learn a new ability
                 
-                if(petabilities.length > 2) return errmsg(`Your pet can't have any more abilities!`).catch(allerrors) //if the pet already has 3 abilities
+                if(petabilities.length > 2) return errmsg(`Your pet can't have any more abilities!`).catch(allerrors) //if the pet already has 3 abilities, send an error message
                 else{//pet can acquire one or more extra abilities
 
                     i = 1
@@ -4393,9 +4394,9 @@ Type the respective number beside the action you would like to select.\nType 'ca
                     let availableabilitiesnum = 0
                     let availableabilitynames = []
                     abilityrows.forEach((row) => {
-                        if(!petabilities.includes(row.name.toLowerCase())){//if the pet doesn't already own the ability
+                        if(!petabilities.includes(row.name.toLowerCase())){//if the pet doesn't already own the ability add it
                             let useablebyarray = row.useableby.split(',') //pushes all classes the ability can be used by to an array
-                            if(!useablebyarray.includes(crrow.diet)) return i = i+1//ignores all abilities the pet cant use because of it's diet
+                            if(!useablebyarray.includes(crrow.diet)) return //ignores all abilities the pet cant use because of it's diet
 
                             //the ability gets added to a variable for display in the menu
                             availableabilities = availableabilities + `[${i}] ${row.name} (Level requirement: ${row.lvl})\n`
@@ -4407,14 +4408,14 @@ Type the respective number beside the action you would like to select.\nType 'ca
                         }
                     })
                     let syntax = `py`
-                    if(availableabilitynames.length<1){availableabilities = `== No new abilities currently available ==\n: Level up your pet to unlock new ones! :\n`; syntax = `asciidoc`} //if no abilities are available it sets the variable to say that and changes the syntax highlighting
+                    if(availableabilitynames.length<1){availableabilities = `== No new abilities currently available ==\n`; syntax = `asciidoc`} //if no abilities are available it sets the variable to say that and changes the syntax highlighting
                     //deletes the users message, then ends the first collector
                     message.delete().catch(allerrors)
                     reacted = "y"; collector.stop()
 
                     //new collector:
                     reacted = "n"
-                    choose2msg = await message.channel.send(`\`\`\`${syntax}\nWhich ability do you want to train?\n\n${availableabilities}\nType the respective number beside the ability you want to train.${availableabilitynames.length>=1?`\nType 'cancel' to cancel the training.`:` Training has been cancelled.`}\`\`\``).catch(allerrors)
+                    choose2msg = await message.channel.send(`\`\`\`${syntax}\nWhich ability do you want to train?\n\n${availableabilities}\nType the respective number beside the ability you want to train.\nLevel up your pet to unlock new ${availableabilitynames.length>=1?`abilities!\nType 'cancel' to cancel the training.`:`ones!\n Training has been cancelled.`}\`\`\``).catch(allerrors)
                     
                     if(availableabilitynames.length<1) return collector.stop();//exits if no abilities are available and stops the collector 
 
